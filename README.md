@@ -1,9 +1,5 @@
 `monkedevhacc` Here is a professional `README.md` you can copy-paste directly into your repo.
 
-**⚠️ Quick heads up:** I noticed your repo has `App.tsx` and `index.tsx` in the root, but I didn't see a `package.json` file. You'll need to upload that too so people can actually install the dependencies (React, TypeScript, etc.)!
-
-Here is the file:
-
 ```markdown
 # Polly IDE 🚀
 
