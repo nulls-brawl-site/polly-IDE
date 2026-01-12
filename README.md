@@ -1,5 +1,3 @@
-`monkedevhacc` Here is a professional `README.md` you can copy-paste directly into your repo.
-
 ```markdown
 # Polly IDE 🚀
 
