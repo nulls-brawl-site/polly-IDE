@@ -1,22 +1,24 @@
-```markdown
-# Polly IDE 🚀
 
-**Polly IDE** is an AI-powered development environment designed to generate Angular and React websites instantly. Powered by **Pollinations.AI**, it leverages state-of-the-art models like **Claude 4.5** and **Gemini 3.0** to stream code directly into your editor.
+# Pollinations IDE
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)![React](https://img.shields.io/badge/React-18.0-61DAFB)
+A mobile-first AI coding environment that generates React and Angular applications in real-time using the Pollinations.ai API.
 
-## ✨ Features
+## ⚡ Features
 
-- **Multi-Model Support**: Generate code using **Claude 4.5** (Anthropic) or **Gemini 3.0** (Google) via Pollinations.AI.
-- **Real-Time Streaming**: Experience instant feedback with the `streamPollinations` service—no waiting for full generation.
-- **Modern Stack**: Built with **React** and **TypeScript** for a robust and type-safe experience.
-- **Framework Agnostic**: Capable of scaffolding both Angular and React projects.
+- **Mobile-First Design**: Optimized for coding on the go.
+- **AI Powered**: Uses models like OpenAI GPT-4o, Claude 3.5 Sonnet, and Gemini via Pollinations.ai.
+- **Virtual File System**: Create, edit, rename, and delete files/folders virtually.
+- **Project Export**: Download your generated project as a ZIP file.
+- **Multi-Framework**: Supports generating code for React and Angular.
+- **Token Tracking**: Real-time tracking of token usage and "pollen" cost.
 
-## 🛠️ Tech Stack
+## 🛠 Tech Stack
 
-- **Frontend**: React, TypeScript
-- **AI Backend**: [Pollinations.AI API](https://pollinations.ai)
-- **State Management**: (Add your state manager here if used, e.g., Context API, Redux)
+- **Frontend**: React 18, TypeScript, Vite
+- **Styling**: Tailwind CSS
+- **Icons**: Lucide React
+- **API**: Pollinations.ai (Text Generation)
+- **Utilities**: JSZip (Export), UUID
 
 ## 🚀 Getting Started
 
@@ -27,56 +29,52 @@
 
 ### Installation
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/nulls-brawl-site/polly-IDE.git
-   cd polly-IDE
-   ```
+1. Clone the repository or extract the project files.
 
 2. Install dependencies:
    ```bash
    npm install
-   ```
 
-3. Start the development server:
-   ```bash
-   npm start
-   # or if using Vite
-   npm run dev
-   ```
+Start the development server:
 
-4. Open your browser at `http://localhost:3000` (or the port shown in your terminal).
+code
+Bash
+download
+content_copy
+expand_less
+npm run dev
 
-## 🧩 Usage
-1. Select your preferred AI model (Claude 4.5 or Gemini 3.0).
-2. Enter your prompt (e.g., "Create a login page with a dark theme").
-3. Watch the code generate in real-time!
+Open your browser at http://localhost:5173.
 
-## 📂 Project Structure
+🔑 API Configuration
 
-```
-polly-IDE/
-├── components/       # UI Components
-├── services/         # API services (Pollinations integration)
-├── App.tsx          # Main application component
-├── types.ts         # TypeScript definitions
-└── ...
-```
+To use advanced models (like GPT-4 or Claude Opus) and ensure higher rate limits, you need a Pollinations API Key.
 
-## 🤝 Contributing
+Go to the Settings tab (Gear icon).
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Enter your API Key.
 
-1. Fork the project
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+Select your preferred model.
 
-## 📄 License
+Note: Some basic models may work without a key depending on current API availability.
 
-This project is open source and available under the [MIT License](LICENSE).
+📂 Project Structure
+code
+Text
+download
+content_copy
+expand_less
+src/
+├── components/    # UI Components (Chat, Editor, File Explorer)
+├── services/      # API communication logic
+├── App.tsx        # Main application state
+└── constants.ts   # System prompts and default settings
+📜 License
 
----
-*Powered by [Pollinations.AI](https://pollinations.ai)*
-```
+MIT
+
+code
+Code
+download
+content_copy
+expand_less
