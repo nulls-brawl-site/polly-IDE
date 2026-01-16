@@ -24,12 +24,20 @@ export interface ToolCall {
   result?: string;
 }
 
+export interface TokenUsage {
+  promptTokens: number;
+  completionTokens: number;
+  totalTokens: number;
+}
+
 export interface Message {
   id: string;
   role: 'user' | 'model';
   text?: string;
   toolCalls?: ToolCall[];
   timestamp: number;
+  usage?: TokenUsage;
+  cost?: number; // Pollen cost
 }
 
 export interface ChatSession {
@@ -39,6 +47,9 @@ export interface ChatSession {
   messages: Message[];
   files: FileItem[];
   lastModified: number;
+  // Cumulative stats
+  totalCost?: number;
+  totalTokens?: number;
 }
 
 export interface AppState {

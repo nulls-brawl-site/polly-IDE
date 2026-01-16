@@ -21,12 +21,16 @@
               'poll-accent-hover': '#ca8a04',
               'poll-bg': '#000000',
             },
+            transitionTimingFunction: {
+              'ios': 'cubic-bezier(0.19, 1, 0.22, 1)',
+            },
             animation: {
-              'scale-in': 'scaleIn 0.2s ease-out forwards',
+              'scale-in': 'scaleIn 0.4s cubic-bezier(0.19, 1, 0.22, 1) forwards',
               'fade-in': 'fadeIn 0.3s ease-out forwards',
-              'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-              'slide-in-left': 'slideInLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-              'slide-out-left': 'slideOutLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              'slide-up': 'slideUp 0.5s cubic-bezier(0.19, 1, 0.22, 1) forwards',
+              'slide-in-right': 'slideInRight 0.4s cubic-bezier(0.19, 1, 0.22, 1) forwards',
+              'pulse-glow': 'pulseGlow 2s infinite',
+              'bounce-subtle': 'bounceSubtle 2s infinite',
             },
             keyframes: {
               scaleIn: {
@@ -38,16 +42,20 @@
                 '100%': { opacity: '1' },
               },
               slideUp: {
-                '0%': { transform: 'translateY(10px)', opacity: '0' },
+                '0%': { transform: 'translateY(20px)', opacity: '0' },
                 '100%': { transform: 'translateY(0)', opacity: '1' },
               },
-              slideInLeft: {
-                '0%': { transform: 'translateX(-100%)' },
-                '100%': { transform: 'translateX(0)' },
+              slideInRight: {
+                '0%': { transform: 'translateX(20px)', opacity: '0' },
+                '100%': { transform: 'translateX(0)', opacity: '1' },
               },
-              slideOutLeft: {
-                '0%': { transform: 'translateX(0)' },
-                '100%': { transform: 'translateX(-100%)' },
+              pulseGlow: {
+                '0%, 100%': { boxShadow: '0 0 5px rgba(234, 179, 8, 0.2)' },
+                '50%': { boxShadow: '0 0 20px rgba(234, 179, 8, 0.6)' },
+              },
+              bounceSubtle: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-3px)' },
               }
             }
           }
@@ -60,32 +68,36 @@
         background-color: #000000;
         color: #f8fafc;
         -webkit-tap-highlight-color: transparent;
+        overflow: hidden; /* Prevent body scroll, handle in app */
       }
-      ::-webkit-scrollbar {
+      /* Hide scrollbar but keep functionality */
+      .custom-scrollbar::-webkit-scrollbar {
         width: 4px;
         height: 4px;
       }
-      ::-webkit-scrollbar-track {
-        background: #0f172a; 
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent; 
       }
-      ::-webkit-scrollbar-thumb {
-        background: #334155; 
-        border-radius: 2px;
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #333; 
+        border-radius: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #555; 
       }
       
-      /* Hardware acceleration classes */
       .gpu {
-        transform: translateZ(0);
-        will-change: transform, opacity;
+        transform: translate3d(0,0,0);
         backface-visibility: hidden;
+        perspective: 1000px;
+        will-change: transform, opacity;
       }
       
-      .sidebar-backdrop {
-        transition: opacity 0.3s ease;
-      }
-      
-      .sidebar-panel {
-        transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1);
+      .glass-panel {
+        background: rgba(10, 10, 10, 0.8);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
       }
     </style>
   <script type="importmap">
