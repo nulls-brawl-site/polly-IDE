@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,8 +8,17 @@
   color-scheme: dark;
 }
 
-body {
+html, body, #root {
+  height: 100%;
+  width: 100%;
   margin: 0;
+  padding: 0;
+  overflow: hidden; /* Prevent scrolling on body, handle inside app */
   background-color: #000000;
   color: #f8fafc;
+}
+
+/* Custom utility for safe area padding on mobile */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 20px);
 }

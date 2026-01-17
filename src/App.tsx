@@ -84,10 +84,10 @@ const App: React.FC = () => {
       }
   };
 
-  const createNewSession = () => {
+  const createNewSession = (initialPrompt?: string) => {
     const newSession: ChatSession = {
       id: crypto.randomUUID(),
-      title: 'New Project',
+      title: initialPrompt ? initialPrompt.slice(0, 30) + (initialPrompt.length > 30 ? '...' : '') : 'New Project',
       framework: selectedFramework,
       messages: [],
       files: [],
@@ -101,6 +101,7 @@ const App: React.FC = () => {
     setActiveFileId(null);
     setIsSidebarOpen(false);
     setError(null);
+    return newSession;
   };
 
   const deleteSession = (e: React.MouseEvent, id: string) => {
@@ -144,13 +145,19 @@ const App: React.FC = () => {
   };
 
   const handleSendMessage = async (text: string) => {
-    if (!currentSessionId) return;
-
     if (!apiKey || apiKey.trim() === '') {
         const msg = "A Pollinations API Key is REQUIRED.";
         setError(msg);
         if (window.innerWidth < 1024) setActiveTab('config');
         return;
+    }
+
+    let activeSession = currentSession;
+    let isNew = false;
+
+    if (!activeSession) {
+        activeSession = createNewSession(text);
+        isNew = true;
     }
 
     const startBalance = balance;
@@ -162,10 +169,12 @@ const App: React.FC = () => {
       timestamp: Date.now()
     };
 
-    let updatedSession = { ...currentSession! };
-    updatedSession.messages = [...updatedSession.messages, userMsg];
+    const updatedSession = { 
+        ...activeSession, 
+        messages: [...activeSession.messages, userMsg] 
+    };
     
-    setSessions(prev => prev.map(s => s.id === currentSessionId ? updatedSession : s));
+    setSessions(prev => prev.map(s => s.id === updatedSession.id ? updatedSession : s));
 
     setIsLoading(true);
     setError(null);
@@ -420,7 +429,7 @@ const App: React.FC = () => {
         setSelectedFramework={handleFrameworkChange}
         setSelectedModel={setSelectedModel}
         handleApiKeyChange={handleApiKeyChange}
-        createNewSession={createNewSession}
+        createNewSession={() => createNewSession()}
         handleSendMessage={handleSendMessage}
         deleteSession={deleteSession}
         handleDownloadProject={handleDownloadProject}
