@@ -5,20 +5,19 @@ import {
   Settings, 
   Menu, 
   Plus, 
-  MessageSquare,
-  X,
-  Zap,
-  Trophy,
-  Wind,
-  Sparkles,
-  Key,
-  Flower,
-  Coins,
-  Check,
-  Cpu,
-  Ghost,
-  Brain,
-  Box
+  MessageSquare, 
+  X, 
+  Zap, 
+  Trophy, 
+  Wind, 
+  Sparkles, 
+  Key, 
+  Flower, 
+  Coins, 
+  Check, 
+  Brain, 
+  Box, 
+  Ghost 
 } from 'lucide-react';
 import { Framework, ChatSession, FileItem } from '../types.ts';
 import ChatInterface from './ChatInterface.tsx';
@@ -36,7 +35,6 @@ export const MODELS = [
 ];
 
 interface AppLayoutProps {
-  // State
   sessions: ChatSession[];
   currentSessionId: string | null;
   activeFileId: string | null;
@@ -49,7 +47,6 @@ interface AppLayoutProps {
   apiKey: string;
   balance: number | null;
   
-  // Setters/Actions
   setCurrentSessionId: (id: string | null) => void;
   setActiveFileId: (id: string | null) => void;
   setActiveTab: (tab: 'dashboard' | 'explorer' | 'config' | 'chat') => void;
@@ -58,13 +55,11 @@ interface AppLayoutProps {
   setSelectedModel: (model: string) => void;
   handleApiKeyChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   
-  // Core Actions
   createNewSession: () => void;
   handleSendMessage: (text: string) => void;
   deleteSession: (e: React.MouseEvent, id: string) => void;
   handleDownloadProject: () => void;
   
-  // Derived data
   currentSession?: ChatSession;
   activeFile?: FileItem;
 }
@@ -78,8 +73,6 @@ const AppLayout: React.FC<AppLayoutProps> = (props) => {
     createNewSession, handleSendMessage, deleteSession, handleDownloadProject,
     currentSession, activeFile
   } = props;
-
-  // --- Render Helpers ---
 
   const renderProjectList = () => (
     <div className="space-y-3 mt-4">
