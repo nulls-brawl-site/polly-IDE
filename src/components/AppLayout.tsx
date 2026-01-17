@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, 
   Code2, 
@@ -17,7 +17,8 @@ import {
   Check, 
   Brain, 
   Box, 
-  Ghost 
+  Ghost,
+  Play
 } from 'lucide-react';
 import { Framework, ChatSession, FileItem } from '../types.ts';
 import ChatInterface from './ChatInterface.tsx';
@@ -64,7 +65,7 @@ interface AppLayoutProps {
   activeFile?: FileItem;
 }
 
-const AppLayout: React.FC<AppLayoutProps> = (props) => {
+export const AppLayout: React.FC<AppLayoutProps> = (props) => {
   const {
     sessions, currentSessionId, activeFileId, activeTab, isSidebarOpen,
     isLoading, error, selectedFramework, selectedModel, apiKey, balance,
@@ -74,8 +75,25 @@ const AppLayout: React.FC<AppLayoutProps> = (props) => {
     currentSession, activeFile
   } = props;
 
+  const [welcomeInput, setWelcomeInput] = useState('');
+  const [isDesktop, setIsDesktop] = useState(() => typeof window !== 'undefined' ? window.innerWidth >= 1024 : true);
+
+  useEffect(() => {
+    const handleResize = () => setIsDesktop(window.innerWidth >= 1024);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const handleWelcomeSubmit = (e: React.FormEvent) => {
+      e.preventDefault();
+      if(welcomeInput.trim()) {
+          handleSendMessage(welcomeInput);
+          setWelcomeInput('');
+      }
+  };
+
   const renderProjectList = () => (
-    <div className="space-y-3 mt-4">
+    <div className="space-y-3 mt-4 pb-20">
         {sessions.map((s, i) => (
             <div 
                 key={s.id} 
@@ -109,12 +127,12 @@ const AppLayout: React.FC<AppLayoutProps> = (props) => {
   const renderMobileContent = () => {
      if (activeTab === 'config') {
         return (
-            <div className="p-6 text-white h-full overflow-y-auto animate-fade-in pb-24 custom-scrollbar">
+            <div className="p-6 text-white h-full overflow-y-auto animate-fade-in custom-scrollbar">
                 <h2 className="text-2xl font-bold mb-8 flex items-center gap-2">
                     <Settings className="text-poll-accent" /> Settings
                 </h2>
                 
-                <div className="space-y-8">
+                <div className="space-y-8 pb-24">
                      <div className="animate-slide-up" style={{animationDelay: '0.1s'}}>
                         <label className="block text-sm font-bold text-gray-400 mb-3 uppercase tracking-wider">Pollinations API Key <span className="text-red-500">*</span></label>
                         <div className={`bg-[#161b22] border rounded-xl p-4 ${!apiKey ? 'border-red-500/50 bg-red-900/10' : 'border-gray-700'}`}>
@@ -190,17 +208,28 @@ const AppLayout: React.FC<AppLayoutProps> = (props) => {
                  <div className="w-20 h-20 rounded-3xl bg-poll-accent/10 flex items-center justify-center mb-6 animate-scale-in">
                      <Zap size={40} className="text-poll-accent animate-pulse" />
                  </div>
-                 <h2 className="text-2xl font-bold text-white mb-2">Pollinations.ai</h2>
-                 <button onClick={createNewSession} className="w-full max-w-[200px] py-4 bg-poll-accent text-black font-bold rounded-xl shadow-lg shadow-yellow-500/20 hover:scale-105 transition-transform duration-200 flex items-center justify-center gap-2">
-                    <Plus size={20} /> Start Coding
-                 </button>
+                 <h2 className="text-2xl font-bold text-white mb-6">Pollinations.ai</h2>
+                 
+                 <form onSubmit={handleWelcomeSubmit} className="w-full max-w-sm flex items-center gap-2 relative z-10">
+                    <input 
+                      type="text"
+                      value={welcomeInput}
+                      onChange={(e) => setWelcomeInput(e.target.value)}
+                      placeholder="What should we build?"
+                      className="w-full bg-[#161b22] border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-poll-accent transition-colors"
+                    />
+                    <button type="submit" className="absolute right-2 p-2 bg-poll-accent rounded-lg text-black hover:scale-105 transition-transform">
+                        <Play size={18} fill="currentColor"/>
+                    </button>
+                 </form>
+                 <div className="mt-4 text-xs text-gray-600">Enter a prompt to start coding immediately</div>
              </div>
          );
      }
 
      if (activeTab === 'dashboard') {
         return (
-            <div className="p-4 space-y-4 animate-fade-in pb-24 custom-scrollbar h-full overflow-y-auto">
+            <div className="p-4 space-y-4 animate-fade-in custom-scrollbar h-full overflow-y-auto">
                 <h2 className="text-xl font-bold text-white mb-6">Your Projects</h2>
                 <button onClick={createNewSession} className="w-full py-6 border-2 border-dashed border-gray-700 rounded-xl text-gray-400 flex flex-col items-center gap-2 hover:border-poll-accent hover:text-poll-accent transition-colors bg-[#161b22]/50 active:scale-[0.98]">
                     <Plus size={28} /> <span className="font-semibold">New Project</span>
@@ -227,11 +256,9 @@ const AppLayout: React.FC<AppLayoutProps> = (props) => {
      return <ChatInterface messages={currentSession?.messages || []} isLoading={isLoading} onSendMessage={handleSendMessage} error={error} className="h-full animate-fade-in" />;
   };
 
-  return (
-    <div className="h-screen w-full bg-[#000000] text-white flex flex-col overflow-hidden font-sans">
-      
-      {/* Desktop Layout */}
-      <div className="hidden lg:flex h-full">
+  if (isDesktop) {
+    return (
+      <div className="h-screen w-full bg-[#000000] text-white font-sans overflow-hidden flex">
          <div className="w-80 bg-[#050505] border-r border-gray-800 flex flex-col glass-panel relative z-10 animate-slide-in-right">
              <div className="p-5 border-b border-gray-800 flex items-center gap-3">
                  <div className="w-8 h-8 rounded-lg bg-poll-accent flex items-center justify-center text-black shadow-lg shadow-yellow-500/20 animate-bounce-subtle">
@@ -260,8 +287,7 @@ const AppLayout: React.FC<AppLayoutProps> = (props) => {
                  ))}
              </div>
              
-             {/* Configuration Panel in Sidebar */}
-             <div className="p-4 border-t border-gray-800 bg-[#0a0a0a] space-y-3">
+             <div className="p-4 border-t border-gray-800 bg-[#0a0a0a] space-y-3 shrink-0">
                 <div className="flex flex-col gap-1.5 text-xs mb-2">
                     <div className="flex justify-between items-center">
                          <span className="font-medium text-gray-500 uppercase tracking-wider">API Key</span>
@@ -312,7 +338,6 @@ const AppLayout: React.FC<AppLayoutProps> = (props) => {
              </div>
          </div>
 
-         {/* Main Content Area */}
          <div className="flex-1 border-r border-gray-800 flex flex-col min-w-0 bg-[#000]">
              {!currentSessionId ? (
                 <div className="flex flex-col items-center justify-center h-full text-gray-600 gap-6 animate-scale-in">
@@ -320,9 +345,21 @@ const AppLayout: React.FC<AppLayoutProps> = (props) => {
                         <div className="absolute inset-0 bg-poll-accent/20 blur-xl rounded-full animate-pulse-glow"></div>
                         <Zap size={48} className="text-poll-accent opacity-90 relative z-10" />
                     </div>
-                    <div className="text-center">
-                        <h2 className="text-xl font-bold text-white mb-2">Welcome to Pollinations IDE</h2>
-                        <p className="text-gray-500 font-mono text-sm">Select a project to start generating code.</p>
+                    <div className="text-center w-full max-w-md px-6">
+                        <h2 className="text-xl font-bold text-white mb-6">Welcome to Pollinations IDE</h2>
+                        <form onSubmit={handleWelcomeSubmit} className="relative w-full">
+                            <input 
+                                type="text"
+                                value={welcomeInput}
+                                onChange={(e) => setWelcomeInput(e.target.value)}
+                                placeholder="Describe your app to start..."
+                                className="w-full bg-[#111] border border-gray-700 rounded-xl px-5 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-poll-accent transition-colors shadow-lg"
+                                autoFocus
+                            />
+                            <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-poll-accent rounded-lg text-black hover:scale-105 transition-transform">
+                                <Play size={16} fill="currentColor"/>
+                            </button>
+                        </form>
                     </div>
                 </div>
              ) : (
@@ -330,7 +367,6 @@ const AppLayout: React.FC<AppLayoutProps> = (props) => {
              )}
          </div>
 
-         {/* Right Sidebar */}
          <div className="w-[450px] bg-[#050505] flex flex-col border-l border-gray-800 shadow-2xl z-10 animate-slide-in-right">
              {currentSessionId && (
                  <>
@@ -353,10 +389,12 @@ const AppLayout: React.FC<AppLayoutProps> = (props) => {
              )}
          </div>
       </div>
+    );
+  }
 
-      {/* Mobile Layout */}
-      <div className="lg:hidden flex flex-col h-full relative">
-        <header className="h-14 bg-[#0a0a0a] border-b border-gray-800 flex items-center justify-between px-4 shrink-0 z-20">
+  return (
+    <div className="h-screen w-full bg-[#000000] text-white font-sans overflow-hidden flex flex-col relative">
+        <header className="fixed top-0 left-0 right-0 h-14 bg-[#0a0a0a] border-b border-gray-800 flex items-center justify-between px-4 z-50">
             <button onClick={() => setIsSidebarOpen(true)} className="p-2 -ml-2 text-gray-400 hover:text-white active:scale-95 transition-transform"><Menu size={24} /></button>
             <div className="flex items-center gap-2">
                  <Zap size={16} className="text-poll-accent fill-poll-accent" />
@@ -365,18 +403,15 @@ const AppLayout: React.FC<AppLayoutProps> = (props) => {
             <div className="w-8"></div>
         </header>
 
-        {/* Backdrop */}
         <div 
-          className={`fixed inset-0 z-50 flex pointer-events-none transition-all duration-500 ease-ios ${isSidebarOpen ? 'opacity-100 backdrop-blur-sm pointer-events-auto' : 'opacity-0 backdrop-blur-none'}`}
+          className={`fixed inset-0 z-[60] flex pointer-events-none transition-all duration-500 ease-ios ${isSidebarOpen ? 'opacity-100 backdrop-blur-sm pointer-events-auto' : 'opacity-0 backdrop-blur-none'}`}
         >
              <div 
                 className="absolute inset-0 bg-black/60" 
                 onClick={() => setIsSidebarOpen(false)} 
              />
-             
-             {/* Sidebar Panel with GPU acceleration */}
              <div 
-                className={`w-[85%] max-w-xs bg-[#050505] h-full shadow-2xl p-4 flex flex-col border-r border-gray-800 gpu transition-transform duration-500 ease-ios ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
+                className={`w-[85%] max-w-xs bg-[#050505] h-full shadow-2xl p-4 flex flex-col border-r border-gray-800 transition-transform duration-500 ease-ios ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
                 onClick={e => e.stopPropagation()}
              >
                 <h2 className="font-bold text-xl text-white flex items-center gap-2 mb-8"><Zap className="text-poll-accent" size={24} /> Projects</h2>
@@ -396,20 +431,18 @@ const AppLayout: React.FC<AppLayoutProps> = (props) => {
              </div>
         </div>
 
-        {/* Content Container - using relative/absolute to prevent layout jumps */}
-        <div className="flex-1 overflow-hidden relative bg-[#000]">
+        <div className="flex-1 overflow-hidden pt-14 pb-[70px] relative w-full h-full">
              <div className="absolute inset-0 w-full h-full">
                 {renderMobileContent()}
              </div>
         </div>
 
-        <nav className="h-[70px] bg-[#0a0a0a] border-t border-gray-800 flex items-center justify-around shrink-0 pb-safe z-20 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.5)]">
+        <nav className="fixed bottom-0 left-0 right-0 h-[70px] bg-[#0a0a0a] border-t border-gray-800 flex items-center justify-around z-50 pb-safe shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.5)]">
             <button onClick={() => setActiveTab('dashboard')} className={`flex flex-col items-center gap-1.5 p-2 rounded-xl transition-all duration-200 w-16 ${activeTab === 'dashboard' ? 'text-poll-accent bg-poll-accent/10' : 'text-gray-500 hover:text-gray-300'}`}><LayoutDashboard size={24} /></button>
             <button onClick={() => setActiveTab('chat')} className={`flex flex-col items-center gap-1.5 p-2 rounded-xl transition-all duration-200 w-16 ${activeTab === 'chat' ? 'text-poll-accent bg-poll-accent/10' : 'text-gray-500 hover:text-gray-300'}`}><Code2 size={24} /></button>
             {currentSessionId && <button onClick={() => setActiveTab('explorer')} className={`flex flex-col items-center gap-1.5 p-2 rounded-xl transition-all duration-200 w-16 ${activeTab === 'explorer' ? 'text-poll-accent bg-poll-accent/10' : 'text-gray-500 hover:text-gray-300'}`}><MessageSquare size={24} className="rotate-90" /></button>}
             <button onClick={() => setActiveTab('config')} className={`flex flex-col items-center gap-1.5 p-2 rounded-xl transition-all duration-200 w-16 ${activeTab === 'config' ? 'text-poll-accent bg-poll-accent/10' : 'text-gray-500 hover:text-gray-300'}`}><Settings size={24} /></button>
         </nav>
-      </div>
     </div>
   );
 };
