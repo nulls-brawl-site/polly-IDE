@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import JSZip from 'jszip';
-
 import AppLayout from './components/AppLayout.tsx';
-
 import { Framework, ChatSession, Message, ToolCall, TokenUsage } from './types.ts';
 import { streamPollinations, getUserBalance } from './services/pollinationsService.ts';
 import { GET_SYSTEM_INSTRUCTION } from './constants.ts';
@@ -13,7 +11,7 @@ const App: React.FC = () => {
       const saved = localStorage.getItem('pollinations_sessions');
       return saved ? JSON.parse(saved) : [];
     } catch (e) {
-      console.error("Failed to load sessions", e);
+      console.error(e);
       return [];
     }
   });
@@ -43,7 +41,7 @@ const App: React.FC = () => {
     try {
       localStorage.setItem('pollinations_sessions', JSON.stringify(sessions));
     } catch (e) {
-      console.error("Failed to save sessions", e);
+      console.error(e);
     }
   }, [sessions]);
 
@@ -140,7 +138,7 @@ const App: React.FC = () => {
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
     } catch (e) {
-        console.error("Zip generation failed", e);
+        console.error(e);
         setError("Failed to generate project ZIP file.");
     }
   };
@@ -221,13 +219,11 @@ const App: React.FC = () => {
         const currentTools: ToolCall[] = [];
         const detectedFiles: Array<{path: string, content: string}> = [];
 
-        // Handle :::FILE::: blocks
         const blockMatches = [...fullText.matchAll(fileBlockRegex)];
         blockMatches.forEach((m, index) => {
              const path = m[1].trim();
              let content = m[2].trim();
              
-             // CLEANUP: Remove Markdown code fences if the model wrapped the content in them
              const lines = content.split('\n');
              if (lines.length > 0 && lines[0].trim().startsWith('```')) {
                  lines.shift(); 
@@ -250,10 +246,8 @@ const App: React.FC = () => {
              });
         });
 
-        // Hide the raw block from chat
         cleanText = cleanText.replace(fileBlockRegex, '');
 
-        // Handle JSON tools
         const toolMatches = [...cleanText.matchAll(toolRegex)];
         toolMatches.forEach((m, index) => {
              try {
@@ -267,10 +261,8 @@ const App: React.FC = () => {
              } catch (e) { }
         });
 
-        // Hide tool calls from chat
         cleanText = cleanText.replace(toolRegex, '');
 
-        // Check for pending file generation
         const partialMatch = cleanText.match(partialBlockRegex);
         if (partialMatch) {
              const path = partialMatch[1].trim();
@@ -285,10 +277,8 @@ const App: React.FC = () => {
              });
         }
 
-        // Fallback Markdown extraction (only if no structured blocks found)
         if (detectedFiles.length === 0 && currentTools.length === 0) {
             const mdMatches = [...cleanText.matchAll(markdownRegex)];
-            // Only process if it looks like a file block wasn't intended
             if (mdMatches.length > 0 && !cleanText.includes(':::FILE')) {
                  mdMatches.forEach((m, index) => {
                      const content = m[1];
@@ -327,7 +317,6 @@ const App: React.FC = () => {
                 let updatedFiles = [...s.files];
                 let title = s.title;
 
-                // Process File Updates
                 detectedFiles.forEach(f => {
                      const existingIdx = updatedFiles.findIndex(file => file.path === f.path);
                      if (existingIdx >= 0) {
@@ -344,7 +333,6 @@ const App: React.FC = () => {
                      }
                 });
                 
-                // Process JSON Tools
                 toolMatches.forEach(m => {
                     try {
                         const json = JSON.parse(m[1]);
@@ -392,7 +380,6 @@ const App: React.FC = () => {
 
         setSessions(prev => prev.map(s => {
             if (s.id === session.id) {
-                // Update stats
                 const newTotalCost = (s.totalCost || 0) + cost;
                 const newTotalTokens = (s.totalTokens || 0) + (tokens?.totalTokens || 0);
                 
